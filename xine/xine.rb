@@ -42,6 +42,11 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
 
     ns.add_class_wrapper 'Xine', 'xine_t' do |klass|
       klass.add_constructor 'xine_new'
+
+      ns.add_method 'xine_init', 'void', 'init' do |method|
+        method.add_instance_parameter
+      end
+
     end
 
   end
