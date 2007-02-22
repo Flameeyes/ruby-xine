@@ -62,6 +62,24 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
         method.add_parameter_default 'void*', 'data', 'NULL'
       end
 
+      klass.add_method 'xine_config_load', 'void',
+                       'config_load' do |method|
+        method.add_instance_parameter
+        method.add_parameter 'char*', 'filename'
+      end
+
+      klass.add_method 'xine_config_save', 'void',
+                       'config_save' do |method|
+        method.add_instance_parameter
+        method.add_parameter 'char*', 'filename'
+      end
+
+      klass.add_method 'xine_config_reset', 'void',
+                       'config_reset' do |method|
+        method.add_instance_parameter
+        method.add_parameter 'char*', 'filename'
+      end
+
       klass.add_cleanup_function 'xine_exit((xine_t*)p)'
     end
 
@@ -108,5 +126,12 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
       end
     end
 
+    ns.add_class_wrapper 'EventQueue' do |klass|
+      klass.add_constructor 'xine_event_new_queue' do |method|
+        method.add_parameter 'xine_stream_t*', 'stream'
+
+        method.add_cleanup_function 'xine_event_dispose_queue((xine_event_queue_t*)p)'
+      end
+    end
   end
 end
