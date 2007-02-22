@@ -43,22 +43,21 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
     ns.add_class_wrapper 'Xine', 'xine_t' do |klass|
       klass.add_constructor 'xine_new'
 
-      ns.add_method 'xine_init', 'void', 'init' do |method|
+      klass.add_method 'xine_init', 'void', 'init' do |method|
         method.add_instance_parameter
       end
 
-      ns.add_method 'open_audio_port', 'xine_audio_port_t*' do |method|
+      klass.add_method 'open_audio_port', 'xine_audio_port_t*' do |method|
         method.add_instance_parameter
         method.add_parameter 'char*', 'id'
-        method.add_parameter_default 'NULL'
+        method.add_parameter_default 'void*', 'data', 'NULL'
       end
 
-      ns.add_method 'open_video_port', 'xine_video_port_t*' do |method|
+      klass.add_method 'open_video_port', 'xine_video_port_t*' do |method|
         method.add_instance_parameter
         method.add_parameter 'char*', 'id'
-        method.add_parameter 'int', 'visual' # This should be a
-                                             # virtual enum
-        method.add_parameter_default 'NULL'
+        method.add_parameter 'xine_t::Visual::Visual', 'visual'
+        method.add_parameter_default 'void*', 'data', 'NULL'
       end
 
       klass.add_cleanup_function 'xine_exit(p)'
@@ -81,18 +80,22 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
         # and pass it automatically.
       end
 
-      klass.add_constant 'VisualNone', 'XINE_VISUAL_TYPE_NONE'
-      klass.add_constant 'VisualX11', 'XINE_VISUAL_TYPE_X11'
-      klass.add_constant 'VisualX11_2', 'XINE_VISUAL_TYPE_X11_2'
-      klass.add_constant 'VisualAA', 'XINE_VISUAL_TYPE_AA'
-      klass.add_constant 'VisualFB', 'XINE_VISUAL_TYPE_FB'
-      klass.add_constant 'VisualGtk', 'XINE_VISUAL_TYPE_GTK'
-      klass.add_constant 'VisualDFB', 'XINE_VISUAL_TYPE_DFB'
-      klass.add_constant 'VisualPM', 'XINE_VISUAL_TYPE_PM'
-      klass.add_constant 'VisualDirectX', 'XINE_VISUAL_TYPE_DIRECTX'
-      klass.add_constant 'VisualCaca', 'XINE_VISUAL_TYPE_CACA'
-      klass.add_constant 'VisualMacOSX', 'XINE_VISUAL_TYPE_MACOSX'
-      klass.add_constant 'VisualXCB', 'XINE_VISUAL_TYPE_XCB'
+      klass.add_namespace 'Visual', '' do |visual|
+        visual.add_enum 'Visual', 'int' do |enum|
+          enum.add_value 'None', 'XINE_VISUAL_TYPE_NONE'
+          enum.add_value 'X11', 'XINE_VISUAL_TYPE_X11'
+          enum.add_value 'X11_2', 'XINE_VISUAL_TYPE_X11_2'
+          enum.add_value 'AA', 'XINE_VISUAL_TYPE_AA'
+          enum.add_value 'FB', 'XINE_VISUAL_TYPE_FB'
+          enum.add_value 'Gtk', 'XINE_VISUAL_TYPE_GTK'
+          enum.add_value 'DFB', 'XINE_VISUAL_TYPE_DFB'
+          enum.add_value 'PM', 'XINE_VISUAL_TYPE_PM'
+          enum.add_value 'DirectX', 'XINE_VISUAL_TYPE_DIRECTX'
+          enum.add_value 'Caca', 'XINE_VISUAL_TYPE_CACA'
+          enum.add_value 'MacOSX', 'XINE_VISUAL_TYPE_MACOSX'
+          enum.add_value 'XCB', 'XINE_VISUAL_TYPE_XCB'
+        end
+      end
     end
 
     ns.add_class_wrapper 'Stream', 'xine_stream_t' do |klass|
