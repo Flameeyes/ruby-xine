@@ -47,25 +47,27 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
         method.add_instance_parameter
       end
 
-      klass.add_method 'open_audio_port', 'xine_audio_port_t*' do |method|
+      klass.add_method 'xine_open_audio_driver', 'xine_audio_port_t*',
+                       'open_audio_driver' do |method|
         method.add_instance_parameter
         method.add_parameter 'char*', 'id'
         method.add_parameter_default 'void*', 'data', 'NULL'
       end
 
-      klass.add_method 'open_video_port', 'xine_video_port_t*' do |method|
+      klass.add_method 'xine_open_video_driver', 'xine_video_port_t*',
+                       'open_video_driver' do |method|
         method.add_instance_parameter
         method.add_parameter 'char*', 'id'
         method.add_parameter 'xine_t::Visual::Visual', 'visual'
         method.add_parameter_default 'void*', 'data', 'NULL'
       end
 
-      klass.add_cleanup_function 'xine_exit(p)'
+      klass.add_cleanup_function 'xine_exit((xine_t*)p)'
     end
 
     ns.add_class_wrapper 'AudioPort', 'xine_audio_port_t' do |klass|
-      klass.add_method 'close' do |method|
-        method.add_parameter 'xine_t*', 'parent_insatnce'
+      klass.add_method 'xine_close_audio_driver', 'void', 'close' do |method|
+        method.add_parameter 'xine_t*', 'parent_instance'
         method.add_instance_parameter
         # Note: we should find a way to save the parent xine instance
         # and pass it automatically.
@@ -73,8 +75,8 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
     end
 
     ns.add_class_wrapper 'VideoPort', 'xine_video_port_t' do |klass|
-      klass.add_method 'close' do |method|
-        method.add_parameter 'xine_t*', 'parent_insatnce'
+      klass.add_method 'xine_close_video_driver', 'void', 'close' do |method|
+        method.add_parameter 'xine_t*', 'parent_instance'
         method.add_instance_parameter
         # Note: we should find a way to save the parent xine instance
         # and pass it automatically.
@@ -99,7 +101,7 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
     end
 
     ns.add_class_wrapper 'Stream', 'xine_stream_t' do |klass|
-      ns.add_constructor 'xine_stream_new' do |method|
+      klass.add_constructor 'xine_stream_new' do |method|
         method.add_parameter 'xine_t*', 'xine'
         method.add_parameter 'xine_audio_port_t*', 'ao'
         method.add_parameter 'xine_video_port_t*', 'vo'
