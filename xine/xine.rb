@@ -47,6 +47,60 @@ Rust::Bindings::create_bindings Rust::Bindings::LangCxx, "xine" do |b|
         method.add_instance_parameter
       end
 
+      ns.add_method 'open_audio_port', 'xine_audio_port_t*' do |method|
+        method.add_instance_parameter
+        method.add_parameter 'char*', 'id'
+        method.add_parameter_default 'NULL'
+      end
+
+      ns.add_method 'open_video_port', 'xine_video_port_t*' do |method|
+        method.add_instance_parameter
+        method.add_parameter 'char*', 'id'
+        method.add_parameter 'int', 'visual' # This should be a
+                                             # virtual enum
+        method.add_parameter_default 'NULL'
+      end
+
+      klass.add_cleanup_function 'xine_exit(p)'
+    end
+
+    ns.add_class_wrapper 'AudioPort', 'xine_audio_port_t' do |klass|
+      klass.add_method 'close' do |method|
+        method.add_parameter 'xine_t*', 'parent_insatnce'
+        method.add_instance_parameter
+        # Note: we should find a way to save the parent xine instance
+        # and pass it automatically.
+      end
+    end
+
+    ns.add_class_wrapper 'VideoPort', 'xine_video_port_t' do |klass|
+      klass.add_method 'close' do |method|
+        method.add_parameter 'xine_t*', 'parent_insatnce'
+        method.add_instance_parameter
+        # Note: we should find a way to save the parent xine instance
+        # and pass it automatically.
+      end
+
+      klass.add_constant 'VisualNone', 'XINE_VISUAL_TYPE_NONE'
+      klass.add_constant 'VisualX11', 'XINE_VISUAL_TYPE_X11'
+      klass.add_constant 'VisualX11_2', 'XINE_VISUAL_TYPE_X11_2'
+      klass.add_constant 'VisualAA', 'XINE_VISUAL_TYPE_AA'
+      klass.add_constant 'VisualFB', 'XINE_VISUAL_TYPE_FB'
+      klass.add_constant 'VisualGtk', 'XINE_VISUAL_TYPE_GTK'
+      klass.add_constant 'VisualDFB', 'XINE_VISUAL_TYPE_DFB'
+      klass.add_constant 'VisualPM', 'XINE_VISUAL_TYPE_PM'
+      klass.add_constant 'VisualDirectX', 'XINE_VISUAL_TYPE_DIRECTX'
+      klass.add_constant 'VisualCaca', 'XINE_VISUAL_TYPE_CACA'
+      klass.add_constant 'VisualMacOSX', 'XINE_VISUAL_TYPE_MACOSX'
+      klass.add_constant 'VisualXCB', 'XINE_VISUAL_TYPE_XCB'
+    end
+
+    ns.add_class_wrapper 'Stream', 'xine_stream_t' do |klass|
+      ns.add_constructor 'xine_stream_new' do |method|
+        method.add_parameter 'xine_t*', 'xine'
+        method.add_parameter 'xine_audio_port_t*', 'ao'
+        method.add_parameter 'xine_video_port_t*', 'vo'
+      end
     end
 
   end
